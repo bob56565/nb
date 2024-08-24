@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Text Analyzer</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            -webkit-text-size-adjust: 100%;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+        #video {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            border: 1px solid #ccc;
+            background-color: #000;
+        }
+        #output, #gptResponse {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        #startButton {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #cameraSelect {
+            display: block;
+            margin: 10px auto;
+            padding: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Text Analyzer</h1>
+    <video id="video" autoplay playsinline muted></video>
+    <select id="cameraSelect">
+        <option value="">Select camera</option>
+    </select>
+    <button id="startButton">Start Camera</button>
+    <div id="output">Captured text will appear here...</div>
+    <div id="gptResponse">GPT-4 response will appear here...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.0/dist/tesseract.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
