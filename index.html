@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision Assist</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        #video { width: 100%; max-width: 500px; }
+        #response { margin-top: 20px; padding: 10px; border: 1px solid #ccc; min-height: 100px; }
+    </style>
+</head>
+<body>
+    <h1>Vision Assist</h1>
+    <video id="video" autoplay playsinline></video>
+    <div id="response"></div>
+
+    <script>
+        const video = document.getElementById('video');
+        const responseDiv = document.getElementById('response');
+        const apiKey = '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'; // Replace with your actual API key
+        let captureInterval;
+
+        async function setupCamera() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            video.srcObject = stream;
+        }
+
+        async function captureAndAnalyze() {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const imageDataUrl = canvas.toDataURL('image/jpeg');
+
+            try {
+                const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+                    model: "gpt-4-vision-preview",
+                    messages: [
+                        {
+                            role: "user",
+                            content: [
+                                { type: "text", text: "What do you see in this image? Describe any text, objects, signs, or other important details." },
+                                { type: "image_url", image_url: { url: imageDataUrl } }
+                            ]
+                        }
+                    ]
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const aiResponse = response.data.choices[0].message.content;
+                responseDiv.textContent = aiResponse;
+                speak(aiResponse);
+            } catch (error) {
+                console.error('Error analyzing image:', error);
+                responseDiv.textContent = 'Error analyzing image. Please try again.';
+            }
+        }
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            speechSynthesis.speak(utterance);
+        }
+
+        setupCamera().then(() => {
+            captureInterval = setInterval(captureAndAnalyze, 10000); // Capture every 10 seconds
+        });
+    </script>
+</body>
+</html>
